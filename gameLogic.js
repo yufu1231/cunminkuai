@@ -34,16 +34,16 @@ const gameLogic = (() => {
             spawnInterval: 1200
         },
         medium: {
-            initialSpeed: 3,
+            initialSpeed: 3.5,
             speedIncrement: 0.0003,
-            maxSpeed: 7.5,
+            maxSpeed: 8,
             spawnInterval: 1000
         },
         hard: {
-            initialSpeed: 4,
-            speedIncrement: 0.0004,
-            maxSpeed: 9,
-            spawnInterval: 800
+            initialSpeed: 5,
+            speedIncrement: 0.0005,
+            maxSpeed: 12,
+            spawnInterval: 700
         }
     };
 
@@ -95,12 +95,13 @@ const gameLogic = (() => {
         score = 0;
         lastTileTime = 0;
         
-        // Create initial tile
-        createTile();
-        
-        // Start animation loop
-        lastTimestamp = performance.now();
-        animationFrameId = requestAnimationFrame(gameLoop);
+        // 延迟创建第一个方块，给玩家准备时间
+        setTimeout(() => {
+            createTile();
+            // Start animation loop
+            lastTimestamp = performance.now();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }, 1000); // 给玩家1秒准备时间
     }
 
     // Main game loop

@@ -155,6 +155,11 @@ function handleGameOver(finalScore) {
     finalScoreDisplay.textContent = finalScore;
     gameOverModal.classList.remove('hidden');
     gameOverModal.classList.add('animate-fade-in');
+    
+    // Reset save score button
+    const saveScoreBtn = document.getElementById('save-score-btn');
+    saveScoreBtn.disabled = false;
+    saveScoreBtn.textContent = '保存分数';
 }
 
 function updateScore(newScore) {

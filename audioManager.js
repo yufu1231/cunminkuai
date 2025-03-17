@@ -2,7 +2,11 @@
 
 class AudioManager {
     constructor() {
-        // Default sounds (empty, will be set when user uploads)
+        // Default sounds
+        this.defaultClickSound = 'assets/click.WAV';
+        this.defaultFailSound = 'assets/fail.WAV';
+        
+        // Current sounds
         this.clickSound = null;
         this.failSound = null;
         
@@ -12,6 +16,40 @@ class AudioManager {
         
         // Audio context for playing sounds
         this.audioContext = null;
+        
+        // Load default sounds
+        this.loadDefaultSounds();
+    }
+    
+    // Load default sounds
+    loadDefaultSounds() {
+        fetch(this.defaultClickSound)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.clickSound = reader.result;
+                    this.clickSoundName = 'default_click.mp3';
+                    localStorage.setItem('pianoTiles_clickSound', reader.result);
+                    localStorage.setItem('pianoTiles_clickSoundName', 'default_click.mp3');
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => console.error('Error loading default click sound:', error));
+            
+        fetch(this.defaultFailSound)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.failSound = reader.result;
+                    this.failSoundName = 'default_fail.mp3';
+                    localStorage.setItem('pianoTiles_failSound', reader.result);
+                    localStorage.setItem('pianoTiles_failSoundName', 'default_fail.mp3');
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => console.error('Error loading default fail sound:', error));
     }
     
     // Initialize audio context (must be called after user interaction)

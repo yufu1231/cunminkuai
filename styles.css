@@ -28,35 +28,42 @@ body {
 
 /* Button styles */
 .difficulty-btn {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
-    @apply border border-gray-200;
-    @apply active:bg-gray-300;
-    @apply shadow-sm hover:shadow;
+    @apply bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-6 rounded-lg transition-all duration-300 ease-in-out;
+    @apply border border-gray-200/50;
+    @apply active:bg-gray-100;
+    @apply shadow-sm hover:shadow-md;
+    @apply relative overflow-hidden;
 }
 
 .primary-btn {
-    @apply bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
+    @apply bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 ease-in-out;
     @apply active:bg-gray-700;
+    @apply shadow-lg hover:shadow-xl hover:-translate-y-0.5;
+    @apply relative overflow-hidden;
 }
 
 .secondary-btn {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
-    @apply border border-gray-200;
-    @apply active:bg-gray-300;
+    @apply bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-6 rounded-lg transition-all duration-300 ease-in-out;
+    @apply border border-gray-200/50;
+    @apply active:bg-gray-100;
+    @apply shadow-sm hover:shadow-md hover:-translate-y-0.5;
 }
 
 .settings-btn {
-    @apply flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out;
-    @apply border border-gray-200;
+    @apply flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-600 font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out;
+    @apply border border-gray-200/50;
+    @apply shadow-sm hover:shadow-md;
 }
 
 .reset-btn {
-    @apply bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out w-full;
+    @apply bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-4 rounded-lg transition-all duration-300 ease-in-out w-full;
     @apply border border-red-100;
+    @apply hover:shadow-md hover:-translate-y-0.5;
 }
 
 .icon-btn {
-    @apply p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors;
+    @apply p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-all duration-300;
+    @apply hover:shadow-sm;
 }
 
 /* Setting styles */
@@ -86,6 +93,18 @@ body {
     max-width: 500px;
     margin: 0 auto;
     width: 100%;
+    position: relative;
+}
+
+/* Add a subtle pattern background */
+#game-board::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
+    background-size: 20px 20px;
+    z-index: 0;
+    pointer-events: none;
 }
 
 .grid-cols-4 {
@@ -105,58 +124,85 @@ body {
 .tile {
     position: absolute;
     background-color: #333;
-    border: 1px solid #fff;
+    border: 1px solid rgba(255,255,255,0.1);
     z-index: 10;
     user-select: none;
     -webkit-user-select: none;
-    transition: background-color 0.1s;
+    transition: all 0.2s ease-out;
     /* Standard fixed size for all tiles */
-    width: calc(100% - 10px); /* 调整为填满容器宽度减去padding */
-    height: 180px; /* Larger tile height for better visibility */
+    width: calc(100% - 10px);
+    height: 250px;
     box-sizing: border-box;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.tile:active {
+    transform: scale(0.98);
 }
 
 /* Custom tile styling when image is used */
 .custom-tile {
-    background-size: contain !important; /* 使用contain以保持图片比例 */
+    background-size: contain !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-color: rgba(255,255,255,0.9) !important;
-    /* 确保图片在tile内正常显示 */
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    backdrop-filter: blur(8px);
 }
 
-/* Responsive adaptations */
-@media (max-width: 480px) {
-    .difficulty-btn, .primary-btn, .secondary-btn {
-        @apply py-4;
-    }
-    
-    /* Make tiles slightly larger on mobile */
-    .tile {
-        height: 160px;
-    }
+.tile-clicked {
+    transform: scale(0.95);
+    opacity: 0.7;
+    transition: all 0.2s ease-out;
 }
 
 /* Animation classes */
 @keyframes slideDown {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(0); }
+    from { 
+        transform: translateY(-100%) scale(0.95);
+        opacity: 0;
+    }
+    to { 
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
 }
 
 .animate-slide-down {
-    animation: slideDown 0.3s ease-out forwards;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { 
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to { 
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.3s ease-out forwards;
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Modal styles */
+.modal-content {
+    @apply bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl;
+    @apply border border-gray-100;
+    @apply transform transition-all duration-300;
+}
+
+.modal-content.show {
+    @apply scale-100 opacity-100;
+}
+
+.modal-content.hide {
+    @apply scale-95 opacity-0;
 }
 
 /* Gap between sections */
@@ -167,4 +213,16 @@ body {
 /* Ensure space between setting items */
 .setting-item + .setting-item {
     margin-top: 1.25rem;
+}
+
+/* Responsive adaptations */
+@media (max-width: 480px) {
+    .difficulty-btn, .primary-btn, .secondary-btn {
+        @apply py-4;
+    }
+    
+    .tile {
+        height: 200px;
+        border-radius: 8px;
+    }
 }

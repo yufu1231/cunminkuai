@@ -2,11 +2,63 @@
 
 class ImageManager {
     constructor() {
-        // Default tile images (empty, will be set when user uploads)
+        // Default tile images
+        this.defaultTileImage = 'assets/tile.png';
+        this.defaultClickedTileImage = 'assets/clicked_tile.png';
+        
+        // Current tile images
         this.tileImage = null;
         this.tileImageName = '';
         this.clickedTileImage = null;
         this.clickedTileImageName = '';
+        
+        // Load default images
+        this.loadDefaultImages();
+    }
+    
+    // Load default images
+    loadDefaultImages() {
+        fetch(this.defaultTileImage)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.tileImage = reader.result;
+                    this.tileImageName = 'default_tile.png';
+                    localStorage.setItem('pianoTiles_tileImage', reader.result);
+                    localStorage.setItem('pianoTiles_tileImageName', 'default_tile.png');
+                    
+                    // Update preview if exists
+                    const previewImg = document.getElementById('preview-image');
+                    if (previewImg) {
+                        previewImg.src = reader.result;
+                        document.getElementById('tile-image-preview').classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => console.error('Error loading default tile image:', error));
+            
+        fetch(this.defaultClickedTileImage)
+            .then(response => response.blob())
+            .then(blob => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    this.clickedTileImage = reader.result;
+                    this.clickedTileImageName = 'default_clicked_tile.png';
+                    localStorage.setItem('pianoTiles_clickedTileImage', reader.result);
+                    localStorage.setItem('pianoTiles_clickedTileImageName', 'default_clicked_tile.png');
+                    
+                    // Update preview if exists
+                    const clickedPreviewImg = document.getElementById('clicked-preview-image');
+                    if (clickedPreviewImg) {
+                        clickedPreviewImg.src = reader.result;
+                        document.getElementById('clicked-tile-image-preview').classList.remove('hidden');
+                    }
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch(error => console.error('Error loading default clicked tile image:', error));
     }
     
     // 预处理图片，确保其尺寸合适
@@ -19,15 +71,15 @@ class ImageManager {
             const ctx = canvas.getContext('2d');
             
             // 设置最大宽度，考虑到游戏中4列的设计
-            const maxWidth = 200; // 合适的宽度，考虑到手机屏幕
-            const maxHeight = 180; // 与tile高度一致
+            const maxWidth = 300; // 增加宽度
+            const maxHeight = 250; // 增加高度
             
             // 计算调整后的尺寸，保持宽高比
             let width = img.width;
             let height = img.height;
             
-            // 如果图片太窄，确保有合理的宽度（至少50px）
-            if (width < 50) width = 50;
+            // 如果图片太窄，确保有合理的宽度（至少80px）
+            if (width < 80) width = 80;
             
             // 缩放图片以适应最大尺寸
             if (width > maxWidth) {
