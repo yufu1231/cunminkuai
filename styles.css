@@ -1,0 +1,170 @@
+/* Font styles */
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('https://cdn.jsdelivr.net/npm/geist-font@latest/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Geist Mono';
+    src: url('https://cdn.jsdelivr.net/npm/geist-font@latest/fonts/geist-mono/GeistMono-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+.font-geist-mono {
+    font-family: 'Geist Mono', monospace;
+}
+
+body {
+    font-family: 'Noto Sans SC', sans-serif;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Button styles */
+.difficulty-btn {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
+    @apply border border-gray-200;
+    @apply active:bg-gray-300;
+    @apply shadow-sm hover:shadow;
+}
+
+.primary-btn {
+    @apply bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
+    @apply active:bg-gray-700;
+}
+
+.secondary-btn {
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-900 font-medium py-3 px-6 rounded-md transition-all duration-200 ease-in-out;
+    @apply border border-gray-200;
+    @apply active:bg-gray-300;
+}
+
+.settings-btn {
+    @apply flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out;
+    @apply border border-gray-200;
+}
+
+.reset-btn {
+    @apply bg-red-50 hover:bg-red-100 text-red-600 font-medium py-2 px-4 rounded-md transition-all duration-200 ease-in-out w-full;
+    @apply border border-red-100;
+}
+
+.icon-btn {
+    @apply p-2 rounded-md text-gray-600 hover:bg-gray-100 transition-colors;
+}
+
+/* Setting styles */
+.setting-item {
+    @apply bg-gray-50 p-4 rounded-md border border-gray-100 mb-4;
+}
+
+.setting-label {
+    @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.file-name {
+    @apply flex-1 text-gray-500 text-sm truncate mr-2;
+}
+
+.file-upload-btn {
+    @apply flex items-center justify-center p-2 bg-white hover:bg-gray-100 text-gray-600 border border-gray-200 rounded-md cursor-pointer transition-colors;
+}
+
+.image-preview {
+    @apply max-w-full h-40 object-contain mx-auto;
+    background-color: rgba(243, 244, 246, 0.5);
+}
+
+/* Game board styles */
+#game-board {
+    max-width: 500px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.grid-cols-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.tile-container {
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    /* 让tile容器有足够的空间 */
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+.tile {
+    position: absolute;
+    background-color: #333;
+    border: 1px solid #fff;
+    z-index: 10;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 0.1s;
+    /* Standard fixed size for all tiles */
+    width: calc(100% - 10px); /* 调整为填满容器宽度减去padding */
+    height: 180px; /* Larger tile height for better visibility */
+    box-sizing: border-box;
+}
+
+/* Custom tile styling when image is used */
+.custom-tile {
+    background-size: contain !important; /* 使用contain以保持图片比例 */
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-color: rgba(255,255,255,0.9) !important;
+    /* 确保图片在tile内正常显示 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Responsive adaptations */
+@media (max-width: 480px) {
+    .difficulty-btn, .primary-btn, .secondary-btn {
+        @apply py-4;
+    }
+    
+    /* Make tiles slightly larger on mobile */
+    .tile {
+        height: 160px;
+    }
+}
+
+/* Animation classes */
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+.animate-slide-down {
+    animation: slideDown 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Gap between sections */
+.space-y-6 > * + * {
+    margin-top: 1.5rem;
+}
+
+/* Ensure space between setting items */
+.setting-item + .setting-item {
+    margin-top: 1.25rem;
+}
