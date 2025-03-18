@@ -17,8 +17,22 @@ class AudioManager {
         // Audio context for playing sounds
         this.audioContext = null;
         
+        // Add background music
+        this.bgMusic = new Audio('assets/bgm.mp3');
+        this.bgMusic.loop = true;
+        this.isMusicPlaying = false;
+        
         // Load default sounds
         this.loadDefaultSounds();
+        
+        // Load saved sounds from local storage
+        this.loadSavedSounds();
+        
+        // Load music state from localStorage
+        const musicState = localStorage.getItem('pianoTiles_musicState');
+        if (musicState === 'playing') {
+            this.playBackgroundMusic();
+        }
     }
     
     // Load default sounds
@@ -198,5 +212,34 @@ class AudioManager {
             this.failSound = savedFailSound;
             this.failSoundName = savedFailSoundName;
         }
+    }
+    
+    // Play background music
+    playBackgroundMusic() {
+        this.bgMusic.play().catch(e => console.log('Waiting for user interaction to play music'));
+        this.isMusicPlaying = true;
+        localStorage.setItem('pianoTiles_musicState', 'playing');
+    }
+    
+    // Pause background music
+    pauseBackgroundMusic() {
+        this.bgMusic.pause();
+        this.isMusicPlaying = false;
+        localStorage.setItem('pianoTiles_musicState', 'paused');
+    }
+    
+    // Toggle background music state
+    toggleBackgroundMusic() {
+        if (this.isMusicPlaying) {
+            this.pauseBackgroundMusic();
+        } else {
+            this.playBackgroundMusic();
+        }
+        return this.isMusicPlaying;
+    }
+    
+    // Get current music state
+    isMusicOn() {
+        return this.isMusicPlaying;
     }
 }

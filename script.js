@@ -13,6 +13,7 @@ const settingsBtn = document.getElementById('settings-btn');
 const settingsCloseBtn = document.getElementById('settings-close-btn');
 const backBtn = document.getElementById('back-btn');
 const pauseBtn = document.getElementById('pause-btn');
+const musicToggleBtn = document.getElementById('music-toggle-btn');
 const resumeBtn = document.getElementById('resume-btn');
 const exitGameBtn = document.getElementById('exit-game-btn');
 const playAgainBtn = document.getElementById('play-again-btn');
@@ -64,8 +65,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.addEventListener('click', () => {
         if (audioManager) {
             audioManager.initAudioContext();
+            // 如果之前保存的状态是播放音乐，则自动开始播放
+            if (localStorage.getItem('pianoTiles_musicState') === 'playing') {
+                audioManager.playBackgroundMusic();
+                updateMusicButtonState(true);
+            }
         }
     }, { once: true });
+
+    // 添加Font Awesome图标
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+    document.head.appendChild(link);
 });
 
 function setupEventListeners() {
@@ -74,6 +86,11 @@ function setupEventListeners() {
         button.addEventListener('click', () => {
             currentDifficulty = button.dataset.difficulty;
             startGame(currentDifficulty);
+            // 开始游戏时播放音乐
+            if (!audioManager.isMusicOn()) {
+                audioManager.playBackgroundMusic();
+                updateMusicButtonState(true);
+            }
         });
     });
 
@@ -83,17 +100,43 @@ function setupEventListeners() {
 
     // Game navigation buttons
     backBtn.addEventListener('click', confirmExitGame);
-    pauseBtn.addEventListener('click', pauseGame);
-    resumeBtn.addEventListener('click', resumeGame);
-    exitGameBtn.addEventListener('click', exitGame);
+    pauseBtn.addEventListener('click', () => {
+        pauseGame();
+        if (audioManager.isMusicOn()) {
+            audioManager.pauseBackgroundMusic();
+        }
+    });
+    resumeBtn.addEventListener('click', () => {
+        resumeGame();
+        if (audioManager.isMusicOn()) {
+            audioManager.playBackgroundMusic();
+        }
+    });
+    exitGameBtn.addEventListener('click', () => {
+        exitGame();
+        audioManager.pauseBackgroundMusic();
+        updateMusicButtonState(false);
+    });
     playAgainBtn.addEventListener('click', restartGame);
     resetSettingsBtn.addEventListener('click', resetSettings);
+
+    // 游戏结束页面的退出按钮
+    document.getElementById('exit-to-menu-btn').addEventListener('click', () => {
+        gameOverModal.classList.add('hidden');
+        exitGame();
+    });
 
     // File inputs
     clickSoundInput.addEventListener('change', (e) => handleFileUpload(e, 'clickSound'));
     tileImageInput.addEventListener('change', (e) => handleFileUpload(e, 'tileImage'));
     clickedTileImageInput.addEventListener('change', (e) => handleFileUpload(e, 'clickedTileImage'));
     failSoundInput.addEventListener('change', (e) => handleFileUpload(e, 'failSound'));
+
+    // 音乐控制
+    musicToggleBtn.addEventListener('click', () => {
+        const isPlaying = audioManager.toggleBackgroundMusic();
+        updateMusicButtonState(isPlaying);
+    });
 }
 
 function startGame(difficulty) {
@@ -132,17 +175,26 @@ function resumeGame() {
 }
 
 function confirmExitGame() {
-    if (!isGameActive) return;
-    
-    pauseGame();
+    if (confirm('确定要退出游戏吗？')) {
+        exitGame();
+    }
 }
 
 function exitGame() {
-    pauseModal.classList.add('hidden');
-    gameLogic.stopGame();
+    if (pauseModal) {
+        pauseModal.classList.add('hidden');
+    }
+    if (gameLogic) {
+        gameLogic.stopGame();
+    }
     showMainMenu();
     isGameActive = false;
     isGamePaused = false;
+    
+    // 返回主菜单时继续播放音乐
+    if (audioManager.isMusicOn()) {
+        audioManager.playBackgroundMusic();
+    }
 }
 
 function restartGame() {
@@ -273,4 +325,20 @@ function hideSettingsScreen() {
     settingsScreen.classList.add('hidden');
     settingsScreen.classList.remove('flex');
     mainMenu.classList.remove('hidden');
+}
+
+// 更新音乐按钮状态
+function updateMusicButtonState(isPlaying) {
+    const musicBtns = document.querySelectorAll('.icon-btn.music-toggle-btn');
+    musicBtns.forEach(btn => {
+        if (isPlaying) {
+            btn.classList.add('music-playing');
+            btn.querySelector('i').classList.remove('fa-music-slash');
+            btn.querySelector('i').classList.add('fa-music');
+        } else {
+            btn.classList.remove('music-playing');
+            btn.querySelector('i').classList.remove('fa-music');
+            btn.querySelector('i').classList.add('fa-music-slash');
+        }
+    });
 }
